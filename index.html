@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#080a12">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="SOC">
-  <title>SOC - Session Operator Console</title>
+  <meta name="apple-mobile-web-app-title" content="Люмос">
+  <title>Люмос — пульт мягкого эфира</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -18,115 +18,191 @@
   <main id="app" class="phone-shell" aria-live="polite">
     <section id="startScreen" class="screen start-screen active" data-screen="start" aria-labelledby="startTitle">
       <div class="hero-card glass-card">
-        <div class="status-pill"><span class="pulse-dot"></span> Morning protocol</div>
-        <h1 id="startTitle">SOC</h1>
-        <p class="subtitle">Session Operator Console</p>
-        <div class="progress-wrap" aria-label="Preparation progress">
-          <div class="progress-meta"><span>Work-mode charge</span><strong id="progressText">0%</strong></div>
+        <div class="hero-orb" aria-hidden="true"></div>
+        <div class="status-pill"><span class="pulse-dot"></span> утренний протокол iPhone</div>
+        <h1 id="startTitle">Люмос</h1>
+        <p class="subtitle">Пульт мягкого эфира</p>
+        <p class="hero-note">Пройди короткий разгон без давления: вода, уход, свет, камера — и только потом выходи в эфир.</p>
+        <div class="progress-wrap" aria-label="Прогресс подготовки">
+          <div class="progress-meta"><span>Заряд на эфир</span><strong id="progressText">0%</strong></div>
           <div class="progress-track"><div id="startProgress" class="progress-fill"></div></div>
         </div>
       </div>
 
-      <div class="checklist glass-card" id="startChecklist">
-        <label class="check-row pressable">
-          <input type="checkbox" data-start-check="wake">
-          <span class="checkmark"></span>
-          <span><strong>Wake up / reset</strong><small>Water, breathe, reset attention.</small></span>
-        </label>
-        <label class="check-row pressable">
-          <input type="checkbox" data-start-check="prep">
-          <span class="checkmark"></span>
-          <span><strong>Personal preparation</strong><small>Clean look, confident mood.</small></span>
-        </label>
-        <label class="check-row pressable">
-          <input type="checkbox" data-start-check="workspace">
-          <span class="checkmark"></span>
-          <span><strong>Workspace setup</strong><small>Desk, tabs, notes, drink.</small></span>
-        </label>
-        <label class="check-row pressable">
-          <input type="checkbox" data-start-check="camera">
-          <span class="checkmark"></span>
-          <span><strong>Camera/light setup</strong><small>Frame, light, sound, background.</small></span>
-        </label>
+      <div class="quest-card glass-card" id="startQuest" aria-label="Пошаговый старт эфира">
+        <div class="result-head">
+          <div><p class="eyebrow">Квест подготовки</p><h3 id="questTitle">Загружаю первый шаг</h3></div>
+          <span id="questCounter" class="mini-badge">1/14</span>
+        </div>
+        <div class="quest-stage" aria-live="polite">
+          <div id="questIcon" class="quest-icon" aria-hidden="true">💧</div>
+          <p id="questPrompt" class="quest-prompt">Сделай только текущий шаг. Следующий откроется после подтверждения.</p>
+          <p id="questMicrocopy" class="quest-microcopy">Мини-проверка помогает не просто натыкать, а реально выполнить действие.</p>
+        </div>
+        <div id="questReward" class="quest-reward" aria-live="polite">Награда откроется после шага.</div>
+        <button id="completeQuestStep" class="primary-button pressable">Готово, я сделала</button>
+        <button id="undoQuestStep" class="text-button quest-back pressable" disabled>Вернуться на шаг назад</button>
       </div>
 
-      <button id="enterWorkMode" class="primary-button pressable" disabled>ENTER WORK MODE</button>
+      <div class="achievement-strip glass-card" aria-label="Достижения подготовки">
+        <div class="achievement"><span id="badgeWater">💧</span><small>Старт</small></div>
+        <div class="achievement"><span id="badgeGlow">✨</span><small>Уход</small></div>
+        <div class="achievement"><span id="badgeStudio">🎥</span><small>Сцена</small></div>
+        <div class="achievement"><span id="badgeLaunch">🚀</span><small>Эфир</small></div>
+      </div>
+
+      <button id="enterWorkMode" class="primary-button pressable" disabled>ОТКРЫТЬ ЭФИР</button>
     </section>
 
     <section id="homeScreen" class="screen" data-screen="home" aria-labelledby="homeTitle">
       <header class="topbar">
-        <div><p class="eyebrow">Today</p><h2 id="homeTitle">Command Center</h2></div>
-        <button id="resetStart" class="icon-button pressable" title="Restart morning protocol">↻</button>
+        <div><p class="eyebrow">Сегодня</p><h2 id="homeTitle">Пульт эфира</h2></div>
+        <button id="resetStart" class="icon-button pressable" title="Начать утренний протокол заново">↻</button>
       </header>
 
       <div class="timer-card glass-card">
-        <p class="eyebrow">Active session</p>
+        <p class="eyebrow">Активный эфир</p>
         <div id="timerDisplay" class="timer-display">00:00:00</div>
-        <p id="sessionState" class="muted">Ready to begin a focused block.</p>
-        <button id="sessionToggle" class="primary-button pressable">Start Session</button>
+        <p id="sessionState" class="muted">Готова начать спокойный рабочий блок.</p>
+        <div id="launchPlanPreview" class="launch-plan-preview">После игры здесь появится план первых минут.</div>
+        <div class="quick-start-grid" aria-label="Быстрые цели эфира">
+          <button class="goal-chip pressable" data-goal="60">эфир 60 мин</button>
+          <button class="goal-chip pressable" data-goal="90">эфир 90 мин</button>
+          <button class="goal-chip pressable" data-goal="120">рывок 2 часа</button>
+          <button class="goal-chip long-goal pressable" data-goal="300">основной 5 часов</button>
+          <button class="goal-chip long-goal pressable" data-goal="360">основной 6 часов</button>
+          <button class="goal-chip long-goal pressable" data-goal="480">марафон 8 часов</button>
+        </div>
+        <button id="sessionToggle" class="primary-button pressable">Начать эфир</button>
       </div>
 
       <div class="grid-two">
-        <article class="metric-card glass-card"><span id="todaySessions">0</span><small>Sessions today</small></article>
-        <article class="metric-card glass-card"><span id="weekHoursMini">0.0h</span><small>This week</small></article>
+        <article class="metric-card glass-card"><span id="todaySessions">0</span><small>Эфиров сегодня</small></article>
+        <article class="metric-card glass-card"><span id="weekHoursMini">0.0 ч</span><small>На этой неделе</small></article>
       </div>
 
       <article class="glass-card insight-card">
-        <h3>07:00 Reminder</h3>
-        <p id="notificationStatus">Notification setup is checking availability.</p>
-        <button id="enableNotifications" class="secondary-button pressable">Enable reminders</button>
+        <h3>Напоминание 07:00</h3>
+        <p id="notificationStatus">Проверяю, доступны ли напоминания.</p>
+        <button id="enableNotifications" class="secondary-button pressable">Включить напоминания</button>
+      </article>
+
+      <article class="glass-card insight-card save-card">
+        <div><span class="save-dot"></span><strong>Автосохранение включено</strong></div>
+        <p id="saveStatus">Статистика, эфир, чек-лист и личные фразы сохраняются на этом iPhone.</p>
       </article>
     </section>
 
     <section id="phrasesScreen" class="screen" data-screen="phrases" aria-labelledby="phrasesTitle">
-      <header class="topbar"><div><p class="eyebrow">Phrase bank</p><h2 id="phrasesTitle">Quick Copy</h2></div></header>
-      <div id="categoryChips" class="chips" role="tablist" aria-label="Phrase categories"></div>
-      <div class="add-card glass-card">
-        <select id="phraseCategory" aria-label="Category"></select>
-        <textarea id="newPhrase" rows="3" placeholder="Add a high-quality custom phrase..."></textarea>
-        <button id="addPhrase" class="secondary-button pressable">Add Phrase</button>
-      </div>
+      <header class="topbar"><div><p class="eyebrow">Банк фраз</p><h2 id="phrasesTitle">Быстро копировать</h2></div></header>
+      <div id="categoryChips" class="chips" role="tablist" aria-label="Категории фраз"></div>
       <div id="phraseList" class="phrase-list"></div>
     </section>
 
+    <section id="addPhraseScreen" class="screen" data-screen="addPhrase" aria-labelledby="addPhraseTitle">
+      <header class="topbar"><button class="back-button pressable" data-back-to="more">‹ Назад</button><div><p class="eyebrow">Редко, но полезно</p><h2 id="addPhraseTitle">Добавить фразу</h2></div></header>
+      <div class="add-card glass-card">
+        <p class="muted">Сохрани личную фразу. Английские фразы автоматически получат русский перевод, если сервис доступен.</p>
+        <select id="phraseCategory" aria-label="Категория"></select>
+        <textarea id="newPhrase" rows="4" placeholder="Добавь фразу для чата на английском..."></textarea>
+        <button id="addPhrase" class="secondary-button pressable">Добавить фразу</button>
+      </div>
+    </section>
+
     <section id="translateScreen" class="screen" data-screen="translate" aria-labelledby="translateTitle">
-      <header class="topbar"><div><p class="eyebrow">RU ⇄ EN</p><h2 id="translateTitle">Translator</h2></div></header>
+      <header class="topbar"><div><p class="eyebrow">RU ⇄ EN</p><h2 id="translateTitle">Переводчик</h2></div></header>
       <div class="glass-card translator-card">
         <div class="translate-controls">
           <button id="langRuEn" class="chip active pressable" data-pair="ru|en">RU → EN</button>
           <button id="langEnRu" class="chip pressable" data-pair="en|ru">EN → RU</button>
         </div>
-        <textarea id="translateInput" rows="7" placeholder="Type text to translate..."></textarea>
-        <button id="translateButton" class="primary-button pressable">Translate</button>
+        <textarea id="translateInput" rows="7" placeholder="Введи текст для перевода..."></textarea>
+        <button id="translateButton" class="primary-button pressable">Перевести</button>
       </div>
       <div class="glass-card result-card">
-        <div class="result-head"><h3>Result</h3><button id="copyTranslation" class="text-button pressable">Copy</button></div>
-        <p id="translateOutput" class="translation-output">Your translation will appear here.</p>
+        <div class="result-head"><h3>Результат</h3><button id="copyTranslation" class="text-button pressable">Копировать</button></div>
+        <p id="translateOutput" class="translation-output">Здесь появится перевод.</p>
       </div>
     </section>
 
     <section id="statsScreen" class="screen" data-screen="stats" aria-labelledby="statsTitle">
-      <header class="topbar"><div><p class="eyebrow">Performance</p><h2 id="statsTitle">Statistics</h2></div></header>
+      <header class="topbar"><button class="back-button pressable" data-back-to="more">‹ Назад</button><div><p class="eyebrow">Результаты</p><h2 id="statsTitle">Статистика</h2></div></header>
       <div class="grid-two">
-        <article class="metric-card glass-card"><span id="totalSessions">0</span><small>Total sessions</small></article>
-        <article class="metric-card glass-card"><span id="totalHours">0.0h</span><small>Total hours</small></article>
+        <article class="metric-card glass-card"><span id="totalSessions">0</span><small>Всего эфиров</small></article>
+        <article class="metric-card glass-card"><span id="totalHours">0.0 ч</span><small>Всего часов</small></article>
       </div>
       <article class="glass-card chart-card">
-        <h3>This week</h3>
+        <div class="result-head"><h3>На этой неделе</h3><span id="weeklyBadge" class="mini-badge">0% цели</span></div>
         <div id="weekChart" class="week-chart"></div>
       </article>
+      <article class="glass-card insight-card">
+        <h3>Геймификация</h3>
+        <p id="gameInsight">Собираю достижения по эфирам, подготовке и целям.</p>
+      </article>
+      <article class="glass-card insight-card export-card">
+        <h3>Выгрузка итогов</h3>
+        <p>Полный отчёт включает эфиры, подготовку, цели, заработок, накопления и достижения.</p>
+        <button id="exportStats" class="secondary-button pressable">Выгрузить полный отчёт</button>
+      </article>
+      <article class="glass-card insight-card">
+        <h3>Сохранено локально</h3>
+        <p>Статистика и новые фразы остаются в памяти этого браузера или установленного приложения. Завтра открой тот же значок Safari/PWA.</p>
+      </article>
       <article class="glass-card history-card">
-        <div class="result-head"><h3>Recent sessions</h3><button id="clearHistory" class="text-button danger pressable">Clear</button></div>
+        <div class="result-head"><h3>Последние эфиры</h3><button id="clearHistory" class="text-button danger pressable">Очистить</button></div>
         <div id="sessionHistory" class="history-list"></div>
       </article>
     </section>
+
+    <section id="earningsScreen" class="screen" data-screen="earnings" aria-labelledby="earningsTitle">
+      <header class="topbar"><button class="back-button pressable" data-back-to="more">‹ Назад</button><div><p class="eyebrow">Деньги и цели</p><h2 id="earningsTitle">Заработок</h2></div></header>
+      <div class="grid-two">
+        <article class="metric-card glass-card"><span id="todayEarnings">$0</span><small>Сегодня</small></article>
+        <article class="metric-card glass-card"><span id="weekEarnings">$0</span><small>За неделю</small></article>
+      </div>
+      <article class="glass-card add-card">
+        <h3>Запись дня</h3>
+        <input id="earningDate" type="date" aria-label="Дата заработка">
+        <input id="earningAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Сколько заработала сегодня">
+        <textarea id="earningNote" rows="3" placeholder="Заметка: что сработало, какой был вайб, что повторить..."></textarea>
+        <button id="saveEarning" class="secondary-button pressable">Сохранить заработок</button>
+      </article>
+      <article class="glass-card add-card">
+        <h3>Цель накопления</h3>
+        <input id="earningGoalName" type="text" placeholder="Например: отпуск, техника, подушка">
+        <input id="earningGoalAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Сумма цели">
+        <button id="saveEarningGoal" class="secondary-button pressable">Сохранить цель</button>
+        <div class="goal-progress">
+          <div class="progress-meta"><span id="earningGoalLabel">Цель не задана</span><strong id="earningGoalPercent">0%</strong></div>
+          <div class="progress-track"><div id="earningGoalFill" class="progress-fill"></div></div>
+        </div>
+      </article>
+      <article class="glass-card chart-card">
+        <div class="result-head"><h3>Динамика недели</h3><span id="earningStreak" class="mini-badge">0 дней</span></div>
+        <div id="earningsChart" class="week-chart"></div>
+      </article>
+      <article class="glass-card history-card">
+        <div class="result-head"><h3>Последние записи</h3><button id="clearEarnings" class="text-button danger pressable">Очистить</button></div>
+        <div id="earningHistory" class="history-list"></div>
+      </article>
+    </section>
+
+    <section id="moreScreen" class="screen" data-screen="more" aria-labelledby="moreTitle">
+      <header class="topbar"><div><p class="eyebrow">Дополнительно</p><h2 id="moreTitle">Ещё</h2></div></header>
+      <div class="more-grid">
+        <button class="more-card glass-card pressable" data-open-screen="addPhrase"><strong>＋ Добавить фразу</strong><small>Редактировать личный банк фраз.</small></button>
+        <button class="more-card glass-card pressable" data-open-screen="earnings"><strong>💎 Заработок</strong><small>Дневные суммы, цели и график накоплений.</small></button>
+        <button class="more-card glass-card pressable" data-open-screen="stats"><strong>📤 Выгрузка</strong><small>Полный отчёт по работе, деньгам и подготовке.</small></button>
+      </div>
+    </section>
   </main>
 
-  <nav id="tabBar" class="tab-bar glass-card hidden" aria-label="Primary navigation">
-    <button class="tab active pressable" data-target="home">⌁<span>Home</span></button>
-    <button class="tab pressable" data-target="phrases">✦<span>Phrases</span></button>
-    <button class="tab pressable" data-target="translate">⇄<span>Translate</span></button>
-    <button class="tab pressable" data-target="stats">◷<span>Stats</span></button>
+  <nav id="tabBar" class="tab-bar glass-card hidden" aria-label="Основная навигация">
+    <button class="tab active pressable" data-target="home">⌁<span>Эфир</span></button>
+    <button class="tab pressable" data-target="phrases">✦<span>Фразы</span></button>
+    <button class="tab pressable" data-target="translate">⇄<span>Перевод</span></button>
+    <button class="tab pressable" data-target="stats">◷<span>Итоги</span></button>
+    <button class="tab pressable" data-target="more">⋯<span>Ещё</span></button>
   </nav>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>

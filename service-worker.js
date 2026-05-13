@@ -1,4 +1,4 @@
-const CACHE_NAME = 'soc-console-v1';
+const CACHE_NAME = 'lumos-console-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -35,9 +35,9 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data?.type !== 'SHOW_REMINDER') return;
   event.waitUntil(
-    self.registration.showNotification(event.data.title || 'SOC Reminder', {
-      body: event.data.body || 'It is time to enter work mode.',
-      tag: 'soc-daily-reminder',
+    self.registration.showNotification(event.data.title || 'Люмос: напоминание', {
+      body: event.data.body || 'Пора мягко войти в рабочий режим.',
+      tag: 'lumos-daily-reminder',
       requireInteraction: false
     })
   );
