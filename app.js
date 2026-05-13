@@ -9,7 +9,10 @@
     activeSession: 'soc.activeSession',
     notificationAsked: 'soc.notificationAsked',
     gameProgress: 'soc.gameProgress',
-    sessionGoal: 'soc.sessionGoal'
+    sessionGoal: 'soc.sessionGoal',
+    prepRuns: 'soc.prepRuns',
+    earnings: 'soc.earnings',
+    earningGoal: 'soc.earningGoal'
   };
 
   const APP_NAME = 'Люмос';
@@ -52,11 +55,12 @@
   ];
 
   const GAME_ROUNDS = [
-    { id: 'wake', title: 'Снять режим «ещё пять минут»', prompt: 'Выбери самый маленький первый шаг. После выбора сделай его сразу, без оценки настроения.', options: ['Выпить воды', 'Умыться', 'Открыть шторы'] },
-    { id: 'body', title: 'Тело в ресурс', prompt: 'Подготовка не обязана быть идеальной. Выбери один телесный шаг, который даст ощущение чистого старта.', options: ['Душ/умывание', 'Бритьё/уход', 'Завтрак'] },
-    { id: 'look', title: 'Образ без перфекционизма', prompt: 'Собери минимальный образ для камеры: достаточно версии на 70%, чтобы начать вовремя.', options: ['База макияжа', 'Красивый комплект', 'Волосы + аромат'] },
-    { id: 'scene', title: 'Сцена за 10 минут', prompt: 'Выбери главный технический якорь: когда он готов, работа уже почти началась.', options: ['Свет и кадр', 'Ноутбук + интернет', 'Чат и заметки'] },
-    { id: 'launch', title: 'Кнопка эфира', prompt: 'Финальная договорённость: 20 минут тестового эфира считаются победой, даже если дальше решишь продолжать.', options: ['Старт 20 минут', 'Старт 60 минут', 'Я уже иду'] }
+    { id: 'spark', title: '2 минуты без переговоров', prompt: 'Не надо хотеть эфир. Выбери самый лёгкий физический микрошаг и сделай его сразу — это снимает зависание.', options: ['Вода + лицо', 'Встать и открыть свет', 'Таймер на 2 минуты'] },
+    { id: 'ifthen', title: 'План «если — то»', prompt: 'Выбери страховку от скрытой прокрастинации. Когда сработает триггер, решение уже будет принято.', options: ['Если залипаю — ставлю 5 минут', 'Если страшно — делаю тестовый эфир', 'Если тяну — открываю комнату'] },
+    { id: 'beauty', title: 'Образ на 70%', prompt: 'Камере не нужен идеал. Нужен достаточно красивый старт, который можно улучшать уже в процессе.', options: ['База макияжа', 'Волосы + аромат', 'Красивый комплект'] },
+    { id: 'tech', title: 'Технический якорь', prompt: 'Один готовый якорь превращает «надо начинать» в понятную сцену. Выбери, что проверяешь первым.', options: ['Свет + кадр', 'Звук + интернет', 'Чат + заметки'] },
+    { id: 'first10', title: 'Первые 10 минут', prompt: 'Чтобы не теряться после кнопки, выбери мини-сценарий для входа в комнату.', options: ['Поздороваться + спросить настроение', 'Одна тема + мягкий флирт', 'Цель комнаты + первая фраза'] },
+    { id: 'launch', title: 'Кнопка эфира', prompt: 'Финальная договорённость: тестовые 20 минут уже победа, а дальше можно перейти в длинный 5–6 часовой эфир.', options: ['Тест 20 минут', 'Разгон 60 минут', 'Основной 5–6 часов'] }
   ];
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -99,6 +103,12 @@
     return `${h}:${m}:${s}`;
   };
   const hours = (ms) => (ms / 3600000).toFixed(1);
+  const money = (value) => `$${Number(value || 0).toLocaleString('ru-RU', { maximumFractionDigits: 2 })}`;
+  const dateKey = (date = new Date()) => {
+    const copy = new Date(date);
+    copy.setMinutes(copy.getMinutes() - copy.getTimezoneOffset());
+    return copy.toISOString().slice(0, 10);
+  };
 
   function toast(message) {
     const el = $('#toast');
@@ -128,7 +138,8 @@
   function showScreen(name) {
     state.currentScreen = name;
     $$('.screen').forEach((screen) => screen.classList.toggle('active', screen.dataset.screen === name));
-    $$('.tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.target === name));
+    const tabTarget = ['addPhrase', 'earnings'].includes(name) ? 'more' : name;
+    $$('.tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.target === tabTarget));
     $('#tabBar').classList.toggle('hidden', name === 'start');
     document.body.dataset.screen = name;
   }
@@ -145,9 +156,11 @@
     $('#progressText').textContent = `${pct}%`;
     $('#enterWorkMode').disabled = pct < 100;
     $('#enterWorkMode').textContent = pct < 100 ? `ЕЩЁ ${100 - pct}% ДО ЭФИРА` : 'ВЫЙТИ В ЭФИР';
+    renderLaunchPlanPreview();
   }
 
   function enterApp() {
+    savePrepRun();
     save(STORAGE_KEYS.gateComplete, true);
     showScreen('home');
     updateAllStats();
@@ -162,6 +175,7 @@
     $$('[data-start-check]').forEach((input) => { input.checked = false; });
     renderGameRound();
     updateStartProgress();
+    renderLaunchPlanPreview();
     showScreen('start');
   }
 
@@ -202,6 +216,35 @@
     updateStartProgress();
   }
 
+  function getPrepRuns() { return load(STORAGE_KEYS.prepRuns, []); }
+
+  function savePrepRun() {
+    const checks = $$('[data-start-check]');
+    const checklist = checks.reduce((acc, input) => ({ ...acc, [input.dataset.startCheck]: input.checked }), {});
+    const progress = getGameProgress();
+    const runs = getPrepRuns();
+    const completed = progress.completed.length + checks.filter((input) => input.checked).length;
+    runs.unshift({
+      id: uid(),
+      date: new Date().toISOString(),
+      completed,
+      total: GAME_ROUNDS.length + checks.length,
+      checklist,
+      choices: progress.choices
+    });
+    save(STORAGE_KEYS.prepRuns, runs.slice(0, 60));
+  }
+
+  function renderLaunchPlanPreview() {
+    const el = $('#launchPlanPreview');
+    if (!el) return;
+    const choices = getGameProgress().choices;
+    const parts = [choices.ifthen, choices.tech, choices.first10, choices.launch].filter(Boolean);
+    el.innerHTML = parts.length
+      ? `<strong>План входа:</strong> ${parts.map(escapeHtml).join(' · ')}`
+      : 'После игры здесь появится план первых минут.';
+  }
+
   function renderGameRound() {
     const progress = getGameProgress();
     const round = GAME_ROUNDS[state.gameIndex];
@@ -214,6 +257,7 @@
     const completed = progress.completed.includes(round.id);
     $('#completeGame').textContent = completed ? 'Шаг готов ✓' : 'Завершить шаг';
     $('#completeGame').classList.toggle('complete', completed);
+    renderLaunchPlanPreview();
     $('#prevGame').disabled = state.gameIndex === 0;
     $('#nextGame').disabled = state.gameIndex === GAME_ROUNDS.length - 1;
   }
@@ -384,6 +428,175 @@
     return copy;
   }
 
+  function startOfMonth(date = new Date()) {
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+  }
+
+  function getEarnings() { return load(STORAGE_KEYS.earnings, []); }
+  function getEarningGoal() { return load(STORAGE_KEYS.earningGoal, { name: '', amount: 0 }); }
+
+  function saveEarningEntry() {
+    const date = $('#earningDate').value || dateKey();
+    const amount = Number($('#earningAmount').value || 0);
+    const note = $('#earningNote').value.trim();
+    if (!amount || amount < 0) return toast('Введи сумму за день');
+    const entries = getEarnings().filter((entry) => entry.date !== date);
+    entries.unshift({ id: uid(), date, amount, note, savedAt: new Date().toISOString() });
+    entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+    save(STORAGE_KEYS.earnings, entries);
+    $('#earningAmount').value = '';
+    $('#earningNote').value = '';
+    renderEarnings();
+    updateAllStats();
+    toast('Заработок сохранён');
+  }
+
+  function saveEarningGoal() {
+    const name = $('#earningGoalName').value.trim();
+    const amount = Number($('#earningGoalAmount').value || 0);
+    if (!name || !amount) return toast('Укажи название и сумму цели');
+    save(STORAGE_KEYS.earningGoal, { name, amount });
+    renderEarnings();
+    toast('Цель сохранена');
+  }
+
+  function earningsSummary(entries = getEarnings()) {
+    const now = new Date();
+    const todayKey = dateKey(now);
+    const startWeek = weekStart(now);
+    const monthStart = startOfMonth(now);
+    const today = entries.filter((entry) => entry.date === todayKey).reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+    const week = entries.filter((entry) => new Date(entry.date) >= startWeek).reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+    const month = entries.filter((entry) => new Date(entry.date) >= monthStart).reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+    const total = entries.reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+    return { today, week, month, total };
+  }
+
+  function renderEarnings() {
+    const entries = getEarnings();
+    const summary = earningsSummary(entries);
+    const goal = getEarningGoal();
+    const goalAmount = Number(goal.amount || 0);
+    const pct = goalAmount ? Math.min(100, Math.round((summary.total / goalAmount) * 100)) : 0;
+    $('#todayEarnings').textContent = money(summary.today);
+    $('#weekEarnings').textContent = money(summary.week);
+    $('#earningGoalName').value = goal.name || '';
+    $('#earningGoalAmount').value = goal.amount || '';
+    $('#earningGoalLabel').textContent = goalAmount ? `${goal.name}: ${money(summary.total)} из ${money(goalAmount)}` : 'Цель не задана';
+    $('#earningGoalPercent').textContent = `${pct}%`;
+    $('#earningGoalFill').style.width = `${pct}%`;
+    renderEarningsChart(entries);
+    renderEarningHistory(entries);
+  }
+
+  function renderEarningsChart(entries) {
+    const labels = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+    const startWeek = weekStart(new Date());
+    const days = labels.map((label, index) => {
+      const date = new Date(startWeek); date.setDate(startWeek.getDate() + index);
+      const key = dateKey(date);
+      const total = entries.filter((entry) => entry.date === key).reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+      return { label, total };
+    });
+    const max = Math.max(...days.map((day) => day.total), 1);
+    const streak = days.filter((day) => day.total > 0).length;
+    $('#earningStreak').textContent = `${streak}/7 дней`;
+    $('#earningsChart').innerHTML = days.map((day) => `
+      <div class="day-bar"><div class="bar money-bar" style="height:${Math.max(8, (day.total / max) * 140)}px"></div><span>${day.label}</span><small>${money(day.total)}</small></div>
+    `).join('');
+  }
+
+  function renderEarningHistory(entries) {
+    $('#earningHistory').innerHTML = entries.slice(0, 10).map((entry) => `
+      <div class="history-row"><span><strong>${new Date(entry.date).toLocaleDateString()}</strong><br>${escapeHtml(entry.note || 'Без заметки')}</span><span>${money(entry.amount)}</span></div>
+    `).join('') || '<div class="history-row"><span>Записей заработка пока нет.</span><span>—</span></div>';
+  }
+
+  function buildAchievements(sessions, prepRuns, entries) {
+    const totalMs = sessions.reduce((sum, s) => sum + (s.duration || 0), 0);
+    const maxSession = Math.max(0, ...sessions.map((s) => s.duration || 0));
+    const prepared = prepRuns.filter((run) => run.completed >= run.total).length;
+    const earningDays = new Set(entries.map((entry) => entry.date)).size;
+    return [
+      sessions.length >= 1 ? '🌱 Первый эфир сохранён' : '🌱 Первый эфир ждёт старта',
+      totalMs >= 6 * 3600000 ? '🔥 6+ часов в копилке' : '🔥 Бейдж 6 часов ещё впереди',
+      maxSession >= 5 * 3600000 ? '👑 Длинный эфир 5+ часов' : '👑 Длинный эфир 5+ часов — следующая цель',
+      prepared >= 3 ? '🧩 3 полные подготовки' : `🧩 Полных подготовок: ${prepared}/3`,
+      earningDays >= 5 ? '💎 5 дней заработка записано' : `💎 Дней с заработком: ${earningDays}/5`
+    ];
+  }
+
+  function renderGameInsight(sessions, prepRuns, entries, weeklyMs) {
+    const goal = load(STORAGE_KEYS.sessionGoal, 360) || 360;
+    const weeklyGoalMs = goal * 60000;
+    const weeklyPct = Math.min(100, Math.round((weeklyMs / weeklyGoalMs) * 100));
+    $('#weeklyBadge').textContent = `${weeklyPct}% цели`;
+    const achievements = buildAchievements(sessions, prepRuns, entries).slice(0, 3).join(' · ');
+    $('#gameInsight').textContent = `${achievements}. Подготовок сохранено: ${prepRuns.length}. Полный отчёт можно выгрузить ниже.`;
+  }
+
+  function buildExportText() {
+    const sessions = getSessions();
+    const prepRuns = getPrepRuns();
+    const entries = getEarnings();
+    const goal = getEarningGoal();
+    const now = new Date();
+    const startWeek = weekStart(now);
+    const weeklySessions = sessions.filter((s) => new Date(s.start) >= startWeek);
+    const totalMs = sessions.reduce((sum, s) => sum + (s.duration || 0), 0);
+    const weeklyMs = weeklySessions.reduce((sum, s) => sum + (s.duration || 0), 0);
+    const earnings = earningsSummary(entries);
+    const achievements = buildAchievements(sessions, prepRuns, entries);
+    const lastPrep = prepRuns[0];
+    const prepLines = lastPrep?.choices ? Object.entries(lastPrep.choices).map(([key, value]) => `- ${key}: ${value}`) : ['- Подготовка ещё не сохранена'];
+    const goalLine = goal?.amount ? `${goal.name}: ${money(earnings.total)} из ${money(goal.amount)} (${Math.min(100, Math.round((earnings.total / goal.amount) * 100))}%)` : 'Цель накопления не задана';
+    return [
+      `Люмос — полный отчёт`,
+      `Дата выгрузки: ${now.toLocaleString()}`,
+      '',
+      'Работа:',
+      `- Всего эфиров: ${sessions.length}`,
+      `- Всего часов: ${hours(totalMs)} ч`,
+      `- На этой неделе: ${hours(weeklyMs)} ч`,
+      `- Последняя цель эфира: ${load(STORAGE_KEYS.sessionGoal, 'не выбрана')} мин`,
+      '',
+      'Заработок:',
+      `- Сегодня: ${money(earnings.today)}`,
+      `- Неделя: ${money(earnings.week)}`,
+      `- Месяц: ${money(earnings.month)}`,
+      `- Всего записано: ${money(earnings.total)}`,
+      `- Цель: ${goalLine}`,
+      '',
+      'Подготовка:',
+      `- Сохранённых подготовок: ${prepRuns.length}`,
+      `- Последняя подготовка: ${lastPrep ? `${lastPrep.completed}/${lastPrep.total} шагов · ${new Date(lastPrep.date).toLocaleString()}` : 'нет'}`,
+      ...prepLines,
+      '',
+      'Достижения:',
+      ...achievements.map((item) => `- ${item}`),
+      '',
+      'Последние эфиры:',
+      ...(sessions.length ? sessions.slice(0, 10).map((s) => `- ${new Date(s.start).toLocaleString()} · ${formatDuration(s.duration)}${s.goalMinutes ? ` · цель ${s.goalMinutes} мин` : ''}`) : ['- Нет эфиров']),
+      '',
+      'Последние записи заработка:',
+      ...(entries.length ? entries.slice(0, 10).map((entry) => `- ${new Date(entry.date).toLocaleDateString()} · ${money(entry.amount)} · ${entry.note || 'без заметки'}`) : ['- Нет записей'])
+    ].join('\n');
+  }
+
+  async function exportStats() {
+    const text = buildExportText();
+    await copyText(text);
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `lumos-report-${dateKey()}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+    toast('Отчёт скопирован и скачан');
+  }
+
   function updateAllStats() {
     const sessions = getSessions();
     const now = new Date();
@@ -399,6 +612,8 @@
     $('#totalHours').textContent = `${hours(totalMs)} ч`;
     renderWeekChart(sessions, startWeek);
     renderHistory(sessions);
+    renderEarnings();
+    renderGameInsight(sessions, getPrepRuns(), getEarnings(), weeklyMs);
   }
 
   function renderWeekChart(sessions, startWeek) {
@@ -508,6 +723,11 @@
     $('#translateButton').addEventListener('click', translate);
     $('#copyTranslation').addEventListener('click', () => copyText($('#translateOutput').textContent));
     $('#clearHistory').addEventListener('click', () => { save(STORAGE_KEYS.sessions, []); updateAllStats(); toast('История очищена'); });
+    $('#exportStats').addEventListener('click', exportStats);
+    $('#saveEarning').addEventListener('click', saveEarningEntry);
+    $('#saveEarningGoal').addEventListener('click', saveEarningGoal);
+    $('#clearEarnings').addEventListener('click', () => { save(STORAGE_KEYS.earnings, []); renderEarnings(); updateAllStats(); toast('Заработок очищен'); });
+    $('#earningDate').value = dateKey();
     $('#categoryChips').addEventListener('click', (event) => {
       const button = event.target.closest('[data-category]');
       if (!button) return;
@@ -523,6 +743,7 @@
       if (phrase) copyText(phrase.text);
     });
     $$('.tab').forEach((tab) => tab.addEventListener('click', () => showScreen(tab.dataset.target)));
+    $$('.more-card').forEach((card) => card.addEventListener('click', () => showScreen(card.dataset.openScreen)));
     $('#app').addEventListener('touchstart', (event) => {
       if (event.target.closest('textarea, input, select, button, #startGame')) return;
       const touch = event.changedTouches[0];
@@ -535,8 +756,9 @@
       const dx = touch.clientX - state.touchStartX;
       const dy = touch.clientY - state.touchStartY;
       if (Math.abs(dx) < 72 || Math.abs(dx) < Math.abs(dy) * 1.35 || state.currentScreen === 'start') return;
-      const screens = ['home', 'phrases', 'translate', 'stats'];
-      const nextIndex = Math.min(screens.length - 1, Math.max(0, screens.indexOf(state.currentScreen) + (dx < 0 ? 1 : -1)));
+      const screens = ['home', 'phrases', 'translate', 'stats', 'more'];
+      const current = screens.includes(state.currentScreen) ? state.currentScreen : 'more';
+      const nextIndex = Math.min(screens.length - 1, Math.max(0, screens.indexOf(current) + (dx < 0 ? 1 : -1)));
       showScreen(screens[nextIndex]);
     }, { passive: true });
     $$('.translate-controls .chip').forEach((button) => button.addEventListener('click', () => {
@@ -552,6 +774,7 @@
     updateStartProgress();
     renderPhrases();
     renderGameRound();
+    renderLaunchPlanPreview();
     const goal = load(STORAGE_KEYS.sessionGoal, null);
     $$('.goal-chip').forEach((chip) => chip.classList.toggle('active', Number(chip.dataset.goal) === goal));
     if (!storageWorks) $('#saveStatus').textContent = 'Хранилище заблокировано в этом режиме браузера; открой приложение обычным способом, чтобы сохранять данные между днями.';

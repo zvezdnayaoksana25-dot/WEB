@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lumos-console-v3';
+const CACHE_NAME = 'lumos-console-v4';
 const APP_SHELL = [
   './',
   './index.html',
