@@ -12,54 +12,57 @@
     sessionGoal: 'soc.sessionGoal'
   };
 
-  const CATEGORIES = ['Greeting', 'Flirty', 'Engagement', 'Retention', 'Upsell', 'Control / Direction style', 'Custom'];
+  const APP_NAME = 'Люмос';
+  const DEFAULT_CATEGORY = 'Приветствие';
+  const CATEGORIES = ['Приветствие', 'Флирт', 'Вовлечение', 'Удержание', 'Приват / чаевые', 'Границы и темп', 'Личные'];
+  const LEGACY_DEFAULT_IDS = new Set([
+    'g1', 'g2', 'g3', 'g4', 'f1', 'f2', 'f3', 'f4', 'e1', 'e2', 'e3', 'e4', 'e5',
+    'r1', 'r2', 'r3', 'u1', 'u2', 'c1', 'c2', 'c3', 'c4', 'c5', 'cu1', 'cu2', 'cu3'
+  ]);
   const PRELOADED_PHRASES = [
-    { id: 'g1', category: 'Greeting', text: 'Good morning, I’m online and ready to make this session smooth, focused, and fun.' },
-    { id: 'g2', category: 'Greeting', text: 'Hi, welcome in. I’m glad you made it today — let’s make the next hour count.' },
-    { id: 'g3', category: 'Greeting', text: 'Hey there, settle in and tell me what kind of energy you want from me today.' },
-    { id: 'g4', category: 'Greeting', text: 'Welcome back. I have everything ready, and I’m happy to see you again.' },
-    { id: 'f1', category: 'Flirty', text: 'You have my attention now, so use it wisely.' },
-    { id: 'f2', category: 'Flirty', text: 'I like confident energy. Keep talking like that and I’ll stay very interested.' },
-    { id: 'f3', category: 'Flirty', text: 'Careful, that kind of charm can become addictive.' },
-    { id: 'f4', category: 'Flirty', text: 'You’re making it very easy to enjoy this conversation.' },
-    { id: 'e1', category: 'Engagement', text: 'Tell me one thing you want from this session, and I’ll shape the mood around it.' },
-    { id: 'e2', category: 'Engagement', text: 'Choose the vibe: playful, calm, intense, or teasing.' },
-    { id: 'e3', category: 'Engagement', text: 'Give me a number from 1 to 10 for your mood right now.' },
-    { id: 'e4', category: 'Engagement', text: 'Stay with me for the next five minutes — no distractions, just us and the moment.' },
-    { id: 'e5', category: 'Engagement', text: 'What should I remember about you for next time?' },
-    { id: 'r1', category: 'Retention', text: 'If you stay a little longer, I’ll keep the energy personal and make it worth your time.' },
-    { id: 'r2', category: 'Retention', text: 'Before you go, give me one last choice: soft, playful, or direct?' },
-    { id: 'r3', category: 'Retention', text: 'I like when you stay consistent. Come back tomorrow and I’ll remember this mood.' },
-    { id: 'u1', category: 'Upsell', text: 'I can make this more custom if you want a focused private moment.' },
-    { id: 'u2', category: 'Upsell', text: 'For something more personal, tell me exactly what detail you want me to focus on.' },
-    { id: 'c1', category: 'Control / Direction style', text: 'Slow down, focus, and answer exactly what I asked.' },
-    { id: 'c2', category: 'Control / Direction style', text: 'I want clear words, steady attention, and no rushing.' },
-    { id: 'c3', category: 'Control / Direction style', text: 'Follow my pace. I’ll guide the next step.' },
-    { id: 'c4', category: 'Control / Direction style', text: 'Pause for a second, breathe, and keep your eyes on the conversation.' },
-    { id: 'c5', category: 'Control / Direction style', text: 'Good. Keep that focus and don’t drift away from me.' },
-    { id: 'cu1', category: 'Custom', text: 'I’m switching into work mode now: calm voice, clear energy, consistent presence.' },
-    { id: 'cu2', category: 'Custom', text: 'Quick check-in: what would make this session feel successful for you?' },
-    { id: 'cu3', category: 'Custom', text: 'I’m taking notes so the next session feels even more personal.' }
+    { id: 'ru-g1', category: 'Приветствие', text: 'Hi, welcome in. I’m happy you found my room today.', translation: 'Привет, добро пожаловать. Я рада, что ты сегодня нашёл мою комнату.' },
+    { id: 'ru-g2', category: 'Приветствие', text: 'Good morning, loves. I’m still waking up, so be gentle and keep me company.', translation: 'Доброе утро, милые. Я ещё просыпаюсь, так что будьте нежными и составьте мне компанию.' },
+    { id: 'ru-g3', category: 'Приветствие', text: 'Welcome back. I saved a soft mood and a pretty smile for you.', translation: 'С возвращением. Я сохранила для тебя мягкое настроение и красивую улыбку.' },
+    { id: 'ru-g4', category: 'Приветствие', text: 'Say hi when you enter, I love knowing who is watching me.', translation: 'Поздоровайся, когда заходишь, мне нравится знать, кто на меня смотрит.' },
+    { id: 'ru-f1', category: 'Флирт', text: 'You are distracting me in the best way right now.', translation: 'Ты сейчас отвлекаешь меня самым приятным образом.' },
+    { id: 'ru-f2', category: 'Флирт', text: 'I like confident viewers. Keep that energy with me.', translation: 'Мне нравятся уверенные зрители. Оставайся со мной в этой энергии.' },
+    { id: 'ru-f3', category: 'Флирт', text: 'Careful, if you keep being sweet, I might get attached.', translation: 'Осторожно, если продолжишь быть таким милым, я могу привязаться.' },
+    { id: 'ru-f4', category: 'Флирт', text: 'You just made me smile for real.', translation: 'Ты только что заставил меня улыбнуться по-настоящему.' },
+    { id: 'ru-e1', category: 'Вовлечение', text: 'Choose my vibe for the next five minutes: cute, teasing, or mysterious.', translation: 'Выбери мой вайб на следующие пять минут: милая, дразнящая или загадочная.' },
+    { id: 'ru-e2', category: 'Вовлечение', text: 'Tell me where you are watching from and I’ll send you a little smile.', translation: 'Скажи, откуда ты смотришь, и я отправлю тебе маленькую улыбку.' },
+    { id: 'ru-e3', category: 'Вовлечение', text: 'Give me a number from 1 to 10 for your mood today.', translation: 'Оцени своё настроение сегодня от 1 до 10.' },
+    { id: 'ru-e4', category: 'Вовлечение', text: 'Stay with me for one song and help me wake this room up.', translation: 'Останься со мной на одну песню и помоги разбудить эту комнату.' },
+    { id: 'ru-r1', category: 'Удержание', text: 'Don’t disappear yet, the cozy part is just starting.', translation: 'Не исчезай пока, самая уютная часть только начинается.' },
+    { id: 'ru-r2', category: 'Удержание', text: 'If you stay a little longer, I’ll keep the attention warm and personal.', translation: 'Если останешься ещё немного, я сохраню тёплое и личное внимание.' },
+    { id: 'ru-r3', category: 'Удержание', text: 'Come back tomorrow and remind me of this moment.', translation: 'Возвращайся завтра и напомни мне об этом моменте.' },
+    { id: 'ru-u1', category: 'Приват / чаевые', text: 'If you want my full attention, private is the sweetest place for that.', translation: 'Если хочешь всё моё внимание, приват — самое приятное место для этого.' },
+    { id: 'ru-u2', category: 'Приват / чаевые', text: 'Tips help me choose the next mood, outfit, or little challenge.', translation: 'Чаевые помогают мне выбрать следующий вайб, образ или маленький челлендж.' },
+    { id: 'ru-u3', category: 'Приват / чаевые', text: 'Check my menu and tell me what sounds fun for you.', translation: 'Посмотри моё меню и скажи, что тебе кажется интересным.' },
+    { id: 'ru-c1', category: 'Границы и темп', text: 'Slow down, sweetheart. Clear words first, then we keep playing.', translation: 'Помедленнее, милый. Сначала понятные слова, потом продолжаем играть.' },
+    { id: 'ru-c2', category: 'Границы и темп', text: 'I like respectful attention. Keep it sweet and I’ll stay close.', translation: 'Мне нравится уважительное внимание. Будь милым, и я останусь ближе.' },
+    { id: 'ru-c3', category: 'Границы и темп', text: 'Let me guide the pace, it feels better when we do it my way.', translation: 'Позволь мне вести темп, так получается приятнее.' },
+    { id: 'ru-l1', category: 'Личные', text: 'Work mode is on: soft voice, clean setup, steady smile.', translation: 'Рабочий режим включён: мягкий голос, чистая сцена, спокойная улыбка.' },
+    { id: 'ru-l2', category: 'Личные', text: 'Quick check-in: what would make this room feel special for you?', translation: 'Быстрая проверка: что сделает эту комнату особенной для тебя?' }
   ];
   const MOTIVATION = [
-    'SOC is ready. Start clean, show up sharp, win the morning.',
-    '07:00 protocol: reset, prepare, and enter work mode.',
-    'Your console is waiting. One focused session changes the day.',
-    'Good morning operator. Build momentum before the world gets loud.'
+    'Люмос зовёт: вода, лицо, свет — и без переговоров с ленью.',
+    '07:00: не решай всю жизнь, просто сделай первый маленький шаг к эфиру.',
+    'Ты не обязана хотеть. Достаточно открыть протокол и двигаться по пунктам.',
+    'Один спокойный старт сегодня важнее идеального настроения завтра.'
   ];
 
   const GAME_ROUNDS = [
-    { id: 'breath', title: 'Calm reset', prompt: 'Take 3 slow breaths. Tap the mood you want to carry into the stream.', options: ['Calm', 'Playful', 'Confident'] },
-    { id: 'hook', title: 'Opening hook', prompt: 'Pick today’s first line energy before you go live.', options: ['Warm welcome', 'Teasing opener', 'Direct question'] },
-    { id: 'focus', title: 'Focus lock', prompt: 'Choose the one thing that will make this session successful.', options: ['Stay present', 'Reply faster', 'Keep notes'] },
-    { id: 'finish', title: 'Launch streak', prompt: 'One final check: smile, posture, light, then launch.', options: ['Ready', 'Almost ready', 'Let’s go'] }
+    { id: 'wake', title: 'Снять режим «ещё пять минут»', prompt: 'Выбери самый маленький первый шаг. После выбора сделай его сразу, без оценки настроения.', options: ['Выпить воды', 'Умыться', 'Открыть шторы'] },
+    { id: 'body', title: 'Тело в ресурс', prompt: 'Подготовка не обязана быть идеальной. Выбери один телесный шаг, который даст ощущение чистого старта.', options: ['Душ/умывание', 'Бритьё/уход', 'Завтрак'] },
+    { id: 'look', title: 'Образ без перфекционизма', prompt: 'Собери минимальный образ для камеры: достаточно версии на 70%, чтобы начать вовремя.', options: ['База макияжа', 'Красивый комплект', 'Волосы + аромат'] },
+    { id: 'scene', title: 'Сцена за 10 минут', prompt: 'Выбери главный технический якорь: когда он готов, работа уже почти началась.', options: ['Свет и кадр', 'Ноутбук + интернет', 'Чат и заметки'] },
+    { id: 'launch', title: 'Кнопка эфира', prompt: 'Финальная договорённость: 20 минут тестового эфира считаются победой, даже если дальше решишь продолжать.', options: ['Старт 20 минут', 'Старт 60 минут', 'Я уже иду'] }
   ];
-
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
   const state = {
     currentScreen: 'start',
-    selectedCategory: 'Greeting',
+    selectedCategory: DEFAULT_CATEGORY,
     langPair: 'ru|en',
     timerInterval: null,
     reminderTimeout: null,
@@ -119,7 +122,7 @@
       document.execCommand('copy');
       area.remove();
     }
-    toast('Copied to clipboard');
+    toast('Скопировано в буфер');
   }
 
   function showScreen(name) {
@@ -141,7 +144,7 @@
     $('#startProgress').style.width = `${pct}%`;
     $('#progressText').textContent = `${pct}%`;
     $('#enterWorkMode').disabled = pct < 100;
-    $('#enterWorkMode').textContent = pct < 100 ? `CHARGE ${100 - pct}% MORE` : 'ENTER WORK MODE';
+    $('#enterWorkMode').textContent = pct < 100 ? `ЕЩЁ ${100 - pct}% ДО ЭФИРА` : 'ВЫЙТИ В ЭФИР';
   }
 
   function enterApp() {
@@ -162,16 +165,27 @@
     showScreen('start');
   }
 
+  function normalizePhrase(phrase) {
+    const category = CATEGORIES.includes(phrase.category) ? phrase.category : 'Личные';
+    return {
+      id: phrase.id || uid(),
+      category,
+      text: phrase.text || '',
+      translation: phrase.translation || (hasCyrillic(phrase.text || '') ? phrase.text : 'Перевод появится после повторного добавления фразы.')
+    };
+  }
+
   function getPhrases() {
     const stored = load(STORAGE_KEYS.phrases, null);
     if (!Array.isArray(stored)) {
       save(STORAGE_KEYS.phrases, PRELOADED_PHRASES);
       return PRELOADED_PHRASES;
     }
-    const storedIds = new Set(stored.map((phrase) => phrase.id));
-    const missingDefaults = PRELOADED_PHRASES.filter((phrase) => !storedIds.has(phrase.id));
-    const merged = [...stored, ...missingDefaults];
-    if (missingDefaults.length) save(STORAGE_KEYS.phrases, merged);
+    const personal = stored
+      .filter((phrase) => phrase?.text && !LEGACY_DEFAULT_IDS.has(phrase.id) && !PRELOADED_PHRASES.some((item) => item.id === phrase.id))
+      .map(normalizePhrase);
+    const merged = [...personal, ...PRELOADED_PHRASES];
+    save(STORAGE_KEYS.phrases, merged);
     return merged;
   }
 
@@ -198,7 +212,7 @@
       <button class="game-option pressable ${progress.choices[round.id] === option ? 'active' : ''}" data-game-choice="${escapeHtml(option)}">${escapeHtml(option)}</button>
     `).join('');
     const completed = progress.completed.includes(round.id);
-    $('#completeGame').textContent = completed ? 'Round complete ✓' : 'Complete round';
+    $('#completeGame').textContent = completed ? 'Шаг готов ✓' : 'Завершить шаг';
     $('#completeGame').classList.toggle('complete', completed);
     $('#prevGame').disabled = state.gameIndex === 0;
     $('#nextGame').disabled = state.gameIndex === GAME_ROUNDS.length - 1;
@@ -220,12 +234,12 @@
   function completeGameRound() {
     const progress = getGameProgress();
     const round = GAME_ROUNDS[state.gameIndex];
-    if (!progress.choices[round.id]) return toast('Pick one option first');
+    if (!progress.choices[round.id]) return toast('Сначала выбери вариант');
     if (!progress.completed.includes(round.id)) progress.completed.push(round.id);
     setGameProgress(progress);
     renderGameRound();
     if (state.gameIndex < GAME_ROUNDS.length - 1) moveGame(1);
-    toast('Warm-up saved');
+    toast('Шаг сохранён');
   }
 
   function renderCategories() {
@@ -240,53 +254,77 @@
     const phrases = getPhrases().filter((phrase) => phrase.category === state.selectedCategory);
     $('#phraseList').innerHTML = phrases.length ? phrases.map((phrase) => `
       <article class="phrase-item glass-card pressable" data-copy-phrase="${phrase.id}">
-        <div><p>${escapeHtml(phrase.text)}</p><small>${phrase.category}</small></div>
-        <button class="delete-button pressable" data-delete-phrase="${phrase.id}" title="Delete phrase">✕</button>
+        <div>
+          <p>${escapeHtml(phrase.text)}</p>
+          <small class="phrase-translation">${escapeHtml(phrase.translation || '')}</small>
+          <small>${phrase.category}</small>
+        </div>
+        <button class="delete-button pressable" data-delete-phrase="${phrase.id}" title="Удалить фразу">✕</button>
       </article>
-    `).join('') : '<article class="phrase-item glass-card"><p>No phrases in this category yet.</p></article>';
+    `).join('') : '<article class="phrase-item glass-card"><p>В этой категории пока нет фраз.</p></article>';
   }
 
   function escapeHtml(text) {
     return text.replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
   }
 
-  function addPhrase() {
+
+  function hasCyrillic(text) {
+    return /[А-Яа-яЁё]/.test(text);
+  }
+
+  async function translateText(text, langPair = 'en|ru') {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${encodeURIComponent(langPair)}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Сервис перевода недоступен');
+    const data = await response.json();
+    const translated = data?.responseData?.translatedText || data?.matches?.[0]?.translation;
+    if (!translated) throw new Error('Перевод не вернулся');
+    return translated;
+  }
+
+  async function addPhrase() {
     const text = $('#newPhrase').value.trim();
     const category = $('#phraseCategory').value;
-    if (text.length < 3) return toast('Write a phrase first');
-    const phrases = getPhrases();
-    phrases.unshift({ id: uid(), category, text });
-    save(STORAGE_KEYS.phrases, phrases);
-    $('#newPhrase').value = '';
-    state.selectedCategory = category;
-    renderPhrases();
-    toast('Phrase added');
+    if (text.length < 3) return toast('Сначала напиши фразу');
+    $('#addPhrase').disabled = true;
+    $('#addPhrase').textContent = 'Добавляю перевод...';
+    let translation = hasCyrillic(text) ? text : 'Перевод временно недоступен — попробуй позже через вкладку «Перевод». ';
+    try {
+      if (!hasCyrillic(text)) translation = await translateText(text, 'en|ru');
+    } catch (error) {
+      toast(error.message);
+    } finally {
+      const phrases = getPhrases();
+      phrases.unshift({ id: uid(), category, text, translation });
+      save(STORAGE_KEYS.phrases, phrases);
+      $('#newPhrase').value = '';
+      state.selectedCategory = category;
+      renderPhrases();
+      $('#addPhrase').disabled = false;
+      $('#addPhrase').textContent = 'Добавить фразу';
+      toast('Фраза добавлена');
+    }
   }
 
   function deletePhrase(id) {
     save(STORAGE_KEYS.phrases, getPhrases().filter((phrase) => phrase.id !== id));
     renderPhrases();
-    toast('Phrase deleted');
+    toast('Фраза удалена');
   }
 
   async function translate() {
     const text = $('#translateInput').value.trim();
-    if (!text) return toast('Type text to translate');
-    $('#translateButton').textContent = 'Translating...';
+    if (!text) return toast('Введи текст для перевода');
+    $('#translateButton').textContent = 'Перевожу...';
     $('#translateButton').disabled = true;
     try {
-      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${encodeURIComponent(state.langPair)}`;
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Translation service unavailable');
-      const data = await response.json();
-      const translated = data?.responseData?.translatedText || data?.matches?.[0]?.translation;
-      if (!translated) throw new Error('No translation returned');
-      $('#translateOutput').textContent = translated;
+      $('#translateOutput').textContent = await translateText(text, state.langPair);
     } catch (error) {
-      $('#translateOutput').textContent = 'Translation is unavailable offline or the public API is temporarily busy. Your text remains here so you can try again.';
+      $('#translateOutput').textContent = 'Перевод недоступен офлайн или публичный сервис временно занят. Текст остался здесь — попробуй ещё раз.';
       toast(error.message);
     } finally {
-      $('#translateButton').textContent = 'Translate';
+      $('#translateButton').textContent = 'Перевести';
       $('#translateButton').disabled = false;
     }
   }
@@ -295,7 +333,8 @@
   function getActiveSession() { return load(STORAGE_KEYS.activeSession, null); }
   function setActiveSession(session) {
     if (session) save(STORAGE_KEYS.activeSession, session);
-    else localStorage.removeItem(STORAGE_KEYS.activeSession);
+    else if (storageWorks) localStorage.removeItem(STORAGE_KEYS.activeSession);
+    else memoryStore.delete(STORAGE_KEYS.activeSession);
   }
 
   function toggleSession() {
@@ -308,7 +347,7 @@
     const session = { id: uid(), start: new Date().toISOString(), goalMinutes: load(STORAGE_KEYS.sessionGoal, null) };
     setActiveSession(session);
     startTimerLoop();
-    toast('Session started');
+    toast('Эфир начат');
   }
 
   function stopSession(active) {
@@ -321,16 +360,16 @@
     setActiveSession(null);
     startTimerLoop();
     updateAllStats();
-    toast('Session saved');
+    toast('Эфир сохранён');
   }
 
   function startTimerLoop() {
     clearInterval(state.timerInterval);
     const tick = () => {
       const active = getActiveSession();
-      $('#sessionToggle').textContent = active ? 'Stop Session' : 'Start Session';
-      const goal = active?.goalMinutes ? ` · goal ${active.goalMinutes} min` : '';
-      $('#sessionState').textContent = active ? `Started ${new Date(active.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}${goal}` : 'Ready to begin a focused block.';
+      $('#sessionToggle').textContent = active ? 'Остановить эфир' : 'Начать эфир';
+      const goal = active?.goalMinutes ? ` · цель ${active.goalMinutes} мин` : '';
+      $('#sessionState').textContent = active ? `Начала в ${new Date(active.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}${goal}` : 'Готова начать спокойный рабочий блок.';
       $('#timerDisplay').textContent = active ? formatDuration(Date.now() - new Date(active.start).getTime()) : '00:00:00';
     };
     tick();
@@ -355,15 +394,15 @@
     const totalMs = sessions.reduce((sum, s) => sum + (s.duration || 0), 0);
     const weeklyMs = weekly.reduce((sum, s) => sum + (s.duration || 0), 0);
     $('#todaySessions').textContent = today.length;
-    $('#weekHoursMini').textContent = `${hours(weeklyMs)}h`;
+    $('#weekHoursMini').textContent = `${hours(weeklyMs)} ч`;
     $('#totalSessions').textContent = sessions.length;
-    $('#totalHours').textContent = `${hours(totalMs)}h`;
+    $('#totalHours').textContent = `${hours(totalMs)} ч`;
     renderWeekChart(sessions, startWeek);
     renderHistory(sessions);
   }
 
   function renderWeekChart(sessions, startWeek) {
-    const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const labels = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
     const days = labels.map((label, index) => {
       const date = new Date(startWeek); date.setDate(startWeek.getDate() + index);
       const next = new Date(date); next.setDate(date.getDate() + 1);
@@ -372,14 +411,14 @@
     });
     const max = Math.max(...days.map((d) => d.total), 3600000);
     $('#weekChart').innerHTML = days.map((day) => `
-      <div class="day-bar"><div class="bar" style="height:${Math.max(8, (day.total / max) * 140)}px"></div><span>${day.label}</span><small>${hours(day.total)}h</small></div>
+      <div class="day-bar"><div class="bar" style="height:${Math.max(8, (day.total / max) * 140)}px"></div><span>${day.label}</span><small>${hours(day.total)} ч</small></div>
     `).join('');
   }
 
   function renderHistory(sessions) {
     $('#sessionHistory').innerHTML = sessions.slice(0, 8).map((s) => `
-      <div class="history-row"><span><strong>${new Date(s.start).toLocaleDateString()}</strong><br>${new Date(s.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}${s.goalMinutes ? ` · ${s.goalMinutes}m goal` : ''}</span><span>${formatDuration(s.duration)}</span></div>
-    `).join('') || '<div class="history-row"><span>No sessions saved yet.</span><span>—</span></div>';
+      <div class="history-row"><span><strong>${new Date(s.start).toLocaleDateString()}</strong><br>${new Date(s.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}${s.goalMinutes ? ` · цель ${s.goalMinutes} мин` : ''}</span><span>${formatDuration(s.duration)}</span></div>
+    `).join('') || '<div class="history-row"><span>Эфиры пока не сохранены.</span><span>—</span></div>';
   }
 
   async function maybeAskNotifications() {
@@ -395,16 +434,17 @@
     updateNotificationStatus();
     if (permission === 'granted') {
       scheduleDailyReminder();
-      toast('Daily reminder enabled');
+      toast('Ежедневное напоминание включено');
     }
   }
 
   function updateNotificationStatus() {
     const supported = 'Notification' in window;
     const status = supported ? Notification.permission : 'unsupported';
+    const labels = { granted: 'разрешено', denied: 'запрещено', default: 'ещё не выбрано', unsupported: 'не поддерживается' };
     $('#notificationStatus').textContent = supported
-      ? `Permission: ${status}. Browser reminders run while the app is open or installed and allowed by the OS.`
-      : 'This browser does not support web notifications. The app still works normally.';
+      ? `Разрешение: ${labels[status] || status}. Напоминания работают, пока приложение открыто или установлено и разрешено системой.`
+      : 'Этот браузер не поддерживает веб-уведомления. Остальные функции работают обычно.';
     $('#enableNotifications').disabled = !supported || status === 'granted';
   }
 
@@ -418,9 +458,9 @@
     state.reminderTimeout = setTimeout(() => {
       const body = MOTIVATION[Math.floor(Math.random() * MOTIVATION.length)];
       if (navigator.serviceWorker?.controller) {
-        navigator.serviceWorker.controller.postMessage({ type: 'SHOW_REMINDER', title: 'SOC 07:00', body });
+        navigator.serviceWorker.controller.postMessage({ type: 'SHOW_REMINDER', title: `${APP_NAME} 07:00`, body });
       } else {
-        new Notification('SOC 07:00', { body, tag: 'soc-daily-reminder' });
+        new Notification(`${APP_NAME} 07:00`, { body, tag: 'lumos-daily-reminder' });
       }
       scheduleDailyReminder();
     }, next - now);
@@ -431,7 +471,7 @@
     try {
       await navigator.serviceWorker.register('service-worker.js');
     } catch {
-      toast('Offline cache unavailable in this browser context');
+      toast('Офлайн-кэш недоступен в этом браузере');
     }
   }
 
@@ -443,7 +483,7 @@
     $$('.goal-chip').forEach((button) => button.addEventListener('click', () => {
       save(STORAGE_KEYS.sessionGoal, Number(button.dataset.goal));
       $$('.goal-chip').forEach((chip) => chip.classList.toggle('active', chip === button));
-      toast(`${button.dataset.goal} minute goal saved`);
+      toast(`Цель ${button.dataset.goal} мин сохранена`);
     }));
     $('#enableNotifications').addEventListener('click', requestNotifications);
     $('#addPhrase').addEventListener('click', addPhrase);
@@ -467,7 +507,7 @@
     }, { passive: true });
     $('#translateButton').addEventListener('click', translate);
     $('#copyTranslation').addEventListener('click', () => copyText($('#translateOutput').textContent));
-    $('#clearHistory').addEventListener('click', () => { save(STORAGE_KEYS.sessions, []); updateAllStats(); toast('History cleared'); });
+    $('#clearHistory').addEventListener('click', () => { save(STORAGE_KEYS.sessions, []); updateAllStats(); toast('История очищена'); });
     $('#categoryChips').addEventListener('click', (event) => {
       const button = event.target.closest('[data-category]');
       if (!button) return;
@@ -514,7 +554,7 @@
     renderGameRound();
     const goal = load(STORAGE_KEYS.sessionGoal, null);
     $$('.goal-chip').forEach((chip) => chip.classList.toggle('active', Number(chip.dataset.goal) === goal));
-    if (!storageWorks) $('#saveStatus').textContent = 'Storage is blocked in this browser mode; install/open normally to keep stats across days.';
+    if (!storageWorks) $('#saveStatus').textContent = 'Хранилище заблокировано в этом режиме браузера; открой приложение обычным способом, чтобы сохранять данные между днями.';
     startTimerLoop();
     updateAllStats();
     registerServiceWorker();
