@@ -1,0 +1,26 @@
+{
+  "name": "SOC - Session Operator Console",
+  "short_name": "SOC",
+  "description": "A mobile-first daily session operator console with phrases, translation, timer statistics, reminders, and offline support.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080a12",
+  "theme_color": "#080a12",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%23080a12'/%3E%3Ccircle cx='58' cy='52' r='38' fill='%238d7cff' opacity='.9'/%3E%3Ccircle cx='136' cy='136' r='44' fill='%2336d7c8' opacity='.85'/%3E%3Ctext x='96' y='113' text-anchor='middle' font-family='Arial,sans-serif' font-size='58' font-weight='800' fill='white'%3ESOC%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='116' fill='%23080a12'/%3E%3Ccircle cx='154' cy='136' r='105' fill='%238d7cff' opacity='.9'/%3E%3Ccircle cx='362' cy='360' r='118' fill='%2336d7c8' opacity='.85'/%3E%3Ctext x='256' y='298' text-anchor='middle' font-family='Arial,sans-serif' font-size='154' font-weight='800' fill='white'%3ESOC%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
