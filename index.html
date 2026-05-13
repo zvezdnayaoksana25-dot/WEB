@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080a12">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SOC">
+  <title>SOC - Session Operator Console</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <main id="app" class="phone-shell" aria-live="polite">
+    <section id="startScreen" class="screen start-screen active" data-screen="start" aria-labelledby="startTitle">
+      <div class="hero-card glass-card">
+        <div class="status-pill"><span class="pulse-dot"></span> Morning protocol</div>
+        <h1 id="startTitle">SOC</h1>
+        <p class="subtitle">Session Operator Console</p>
+        <div class="progress-wrap" aria-label="Preparation progress">
+          <div class="progress-meta"><span>Work-mode charge</span><strong id="progressText">0%</strong></div>
+          <div class="progress-track"><div id="startProgress" class="progress-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="checklist glass-card" id="startChecklist">
+        <label class="check-row pressable">
+          <input type="checkbox" data-start-check="wake">
+          <span class="checkmark"></span>
+          <span><strong>Wake up / reset</strong><small>Water, breathe, reset attention.</small></span>
+        </label>
+        <label class="check-row pressable">
+          <input type="checkbox" data-start-check="prep">
+          <span class="checkmark"></span>
+          <span><strong>Personal preparation</strong><small>Clean look, confident mood.</small></span>
+        </label>
+        <label class="check-row pressable">
+          <input type="checkbox" data-start-check="workspace">
+          <span class="checkmark"></span>
+          <span><strong>Workspace setup</strong><small>Desk, tabs, notes, drink.</small></span>
+        </label>
+        <label class="check-row pressable">
+          <input type="checkbox" data-start-check="camera">
+          <span class="checkmark"></span>
+          <span><strong>Camera/light setup</strong><small>Frame, light, sound, background.</small></span>
+        </label>
+      </div>
+
+      <button id="enterWorkMode" class="primary-button pressable" disabled>ENTER WORK MODE</button>
+    </section>
+
+    <section id="homeScreen" class="screen" data-screen="home" aria-labelledby="homeTitle">
+      <header class="topbar">
+        <div><p class="eyebrow">Today</p><h2 id="homeTitle">Command Center</h2></div>
+        <button id="resetStart" class="icon-button pressable" title="Restart morning protocol">↻</button>
+      </header>
+
+      <div class="timer-card glass-card">
+        <p class="eyebrow">Active session</p>
+        <div id="timerDisplay" class="timer-display">00:00:00</div>
+        <p id="sessionState" class="muted">Ready to begin a focused block.</p>
+        <button id="sessionToggle" class="primary-button pressable">Start Session</button>
+      </div>
+
+      <div class="grid-two">
+        <article class="metric-card glass-card"><span id="todaySessions">0</span><small>Sessions today</small></article>
+        <article class="metric-card glass-card"><span id="weekHoursMini">0.0h</span><small>This week</small></article>
+      </div>
+
+      <article class="glass-card insight-card">
+        <h3>07:00 Reminder</h3>
+        <p id="notificationStatus">Notification setup is checking availability.</p>
+        <button id="enableNotifications" class="secondary-button pressable">Enable reminders</button>
+      </article>
+    </section>
+
+    <section id="phrasesScreen" class="screen" data-screen="phrases" aria-labelledby="phrasesTitle">
+      <header class="topbar"><div><p class="eyebrow">Phrase bank</p><h2 id="phrasesTitle">Quick Copy</h2></div></header>
+      <div id="categoryChips" class="chips" role="tablist" aria-label="Phrase categories"></div>
+      <div class="add-card glass-card">
+        <select id="phraseCategory" aria-label="Category"></select>
+        <textarea id="newPhrase" rows="3" placeholder="Add a high-quality custom phrase..."></textarea>
+        <button id="addPhrase" class="secondary-button pressable">Add Phrase</button>
+      </div>
+      <div id="phraseList" class="phrase-list"></div>
+    </section>
+
+    <section id="translateScreen" class="screen" data-screen="translate" aria-labelledby="translateTitle">
+      <header class="topbar"><div><p class="eyebrow">RU ⇄ EN</p><h2 id="translateTitle">Translator</h2></div></header>
+      <div class="glass-card translator-card">
+        <div class="translate-controls">
+          <button id="langRuEn" class="chip active pressable" data-pair="ru|en">RU → EN</button>
+          <button id="langEnRu" class="chip pressable" data-pair="en|ru">EN → RU</button>
+        </div>
+        <textarea id="translateInput" rows="7" placeholder="Type text to translate..."></textarea>
+        <button id="translateButton" class="primary-button pressable">Translate</button>
+      </div>
+      <div class="glass-card result-card">
+        <div class="result-head"><h3>Result</h3><button id="copyTranslation" class="text-button pressable">Copy</button></div>
+        <p id="translateOutput" class="translation-output">Your translation will appear here.</p>
+      </div>
+    </section>
+
+    <section id="statsScreen" class="screen" data-screen="stats" aria-labelledby="statsTitle">
+      <header class="topbar"><div><p class="eyebrow">Performance</p><h2 id="statsTitle">Statistics</h2></div></header>
+      <div class="grid-two">
+        <article class="metric-card glass-card"><span id="totalSessions">0</span><small>Total sessions</small></article>
+        <article class="metric-card glass-card"><span id="totalHours">0.0h</span><small>Total hours</small></article>
+      </div>
+      <article class="glass-card chart-card">
+        <h3>This week</h3>
+        <div id="weekChart" class="week-chart"></div>
+      </article>
+      <article class="glass-card history-card">
+        <div class="result-head"><h3>Recent sessions</h3><button id="clearHistory" class="text-button danger pressable">Clear</button></div>
+        <div id="sessionHistory" class="history-list"></div>
+      </article>
+    </section>
+  </main>
+
+  <nav id="tabBar" class="tab-bar glass-card hidden" aria-label="Primary navigation">
+    <button class="tab active pressable" data-target="home">⌁<span>Home</span></button>
+    <button class="tab pressable" data-target="phrases">✦<span>Phrases</span></button>
+    <button class="tab pressable" data-target="translate">⇄<span>Translate</span></button>
+    <button class="tab pressable" data-target="stats">◷<span>Stats</span></button>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>
