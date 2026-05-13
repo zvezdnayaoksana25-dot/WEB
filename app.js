@@ -9,6 +9,7 @@
     activeSession: 'soc.activeSession',
     notificationAsked: 'soc.notificationAsked',
     gameProgress: 'soc.gameProgress',
+    questProgress: 'soc.questProgress',
     sessionGoal: 'soc.sessionGoal',
     prepRuns: 'soc.prepRuns',
     earnings: 'soc.earnings',
@@ -54,13 +55,21 @@
     'Один спокойный старт сегодня важнее идеального настроения завтра.'
   ];
 
-  const GAME_ROUNDS = [
-    { id: 'spark', title: '2 минуты без переговоров', prompt: 'Не надо хотеть эфир. Выбери самый лёгкий физический микрошаг и сделай его сразу — это снимает зависание.', options: ['Вода + лицо', 'Встать и открыть свет', 'Таймер на 2 минуты'] },
-    { id: 'ifthen', title: 'План «если — то»', prompt: 'Выбери страховку от скрытой прокрастинации. Когда сработает триггер, решение уже будет принято.', options: ['Если залипаю — ставлю 5 минут', 'Если страшно — делаю тестовый эфир', 'Если тяну — открываю комнату'] },
-    { id: 'beauty', title: 'Образ на 70%', prompt: 'Камере не нужен идеал. Нужен достаточно красивый старт, который можно улучшать уже в процессе.', options: ['База макияжа', 'Волосы + аромат', 'Красивый комплект'] },
-    { id: 'tech', title: 'Технический якорь', prompt: 'Один готовый якорь превращает «надо начинать» в понятную сцену. Выбери, что проверяешь первым.', options: ['Свет + кадр', 'Звук + интернет', 'Чат + заметки'] },
-    { id: 'first10', title: 'Первые 10 минут', prompt: 'Чтобы не теряться после кнопки, выбери мини-сценарий для входа в комнату.', options: ['Поздороваться + спросить настроение', 'Одна тема + мягкий флирт', 'Цель комнаты + первая фраза'] },
-    { id: 'launch', title: 'Кнопка эфира', prompt: 'Финальная договорённость: тестовые 20 минут уже победа, а дальше можно перейти в длинный 5–6 часовой эфир.', options: ['Тест 20 минут', 'Разгон 60 минут', 'Основной 5–6 часов'] }
+  const QUEST_STEPS = [
+    { id: 'water', icon: '💧', title: 'Выпить воды', prompt: 'Сделай 6–8 спокойных глотков. Это первый физический якорь: тело уже начало смену.', verify: 'Поставь стакан рядом или наполни бутылку, чтобы вода осталась под рукой.', reward: '💧 Бейдж «Запуск тела»' },
+    { id: 'wash', icon: '🌊', title: 'Умыться', prompt: 'Умойся и протри лицо. Не думай про весь эфир — только вода и зеркало.', verify: 'Коснись сухим полотенцем лица: шаг засчитывается только после умывания.', reward: '🌊 +5 к свежести' },
+    { id: 'skincare', icon: '✨', title: 'Нанести кремики', prompt: 'Нанеси уход: крем, SPF или то, что делает лицо комфортным под камерой.', verify: 'Закрой баночку/тюбик и убери его на место — это маленькая точка завершения.', reward: '✨ Бейдж «Glow ready»' },
+    { id: 'breakfast', icon: '🍳', title: 'Позавтракать', prompt: 'Съешь что-то простое. Цель — энергия на первые минуты, не идеальный завтрак.', verify: 'После еды поставь посуду в раковину или убери упаковку.', reward: '🍳 +10 к выносливости' },
+    { id: 'makeup', icon: '💄', title: 'Накраситься', prompt: 'Собери базовый макияж для камеры. Достаточно версии на 70%, не музейного идеала.', verify: 'Сделай короткий взгляд в зеркало: лицо читается в кадре — значит готово.', reward: '💄 Бейдж «Образ включён»' },
+    { id: 'lights', icon: '💡', title: 'Выставить свет', prompt: 'Включи и поставь свет так, чтобы лицо было мягко видно, без резких теней.', verify: 'Открой камеру на секунду и проверь лицо в кадре.', reward: '💡 +10 к сцене' },
+    { id: 'camera', icon: '🎥', title: 'Поставить камеру', prompt: 'Выставь ракурс, фон и высоту камеры. Один кадр — одна понятная сцена.', verify: 'Сделай тестовый скрин/взгляд: голова, плечи и образ попадают в кадр.', reward: '🎥 Бейдж «Кадр собран»' },
+    { id: 'laptop', icon: '💻', title: 'Подключить ноутбук', prompt: 'Подключи зарядку, интернет, площадку и нужные вкладки. Техника должна быть скучной и готовой.', verify: 'Проверь, что ноутбук заряжается, а страница эфира открывается.', reward: '💻 +10 к стабильности' },
+    { id: 'bathroom2', icon: '🛁', title: 'Ещё раз в ванную', prompt: 'Финальная ванная: туалет, руки, волосы, ощущение чистоты и спокойствия.', verify: 'Вернись к рабочему месту уже без незакрытых бытовых дел.', reward: '🛁 Бейдж «Ничего не отвлекает»' },
+    { id: 'intimate', icon: '🧸', title: 'Интимная подготовка с игрушкой', prompt: 'Подготовь игрушку и тело так, как тебе безопасно и комфортно для формата эфира.', verify: 'Используй лубрикант/гигиену по своему правилу и проверь, что всё ощущается нормально.', reward: '🧸 +10 к уверенности' },
+    { id: 'outfit', icon: '👗', title: 'Одеться красиво', prompt: 'Надень образ, в котором тебе легко включить роль. Красиво — значит удобно держать энергию.', verify: 'Сядь/встань в кадре и проверь, что образ выглядит хорошо в движении.', reward: '👗 Бейдж «Сцена живая»' },
+    { id: 'sound', icon: '🎧', title: 'Проверить звук и чат', prompt: 'Проверь микрофон, звук, чат, меню и быстрые фразы. Это снижает стресс после старта.', verify: 'Скажи тестовую фразу и убедись, что всё слышно/видно.', reward: '🎧 +10 к контролю' },
+    { id: 'warmup', icon: '🗣️', title: 'Первая фраза', prompt: 'Произнеси вслух первую фразу для входа: приветствие, настроение, вопрос зрителям.', verify: 'Не читай молча — скажи её голосом, чтобы рот и роль уже включились.', reward: '🗣️ Бейдж «Голос включён»' },
+    { id: 'launch', icon: '🚀', title: 'Выходить в эфир', prompt: 'Открывай смену. Первые 20 минут — тестовый вход, дальше можно разгоняться.', verify: 'Нажми кнопку старта на площадке, потом открой пульт эфира здесь.', reward: '🚀 Финальный бейдж «Эфир открыт»' }
   ];
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -70,7 +79,7 @@
     langPair: 'ru|en',
     timerInterval: null,
     reminderTimeout: null,
-    gameIndex: 0,
+    questStep: 0,
     touchStartX: 0,
     touchStartY: 0
   };
@@ -144,18 +153,35 @@
     document.body.dataset.screen = name;
   }
 
+  function getQuestProgress() {
+    const legacy = getGameProgress();
+    const progress = load(STORAGE_KEYS.questProgress, null);
+    const completed = Array.isArray(progress?.completed) ? progress.completed : [];
+    const safeCompleted = completed.filter((id) => QUEST_STEPS.some((step) => step.id === id));
+    if (!progress && legacy.completed?.length) {
+      save(STORAGE_KEYS.questProgress, { completed: [] });
+    }
+    return { completed: safeCompleted };
+  }
+
+  function setQuestProgress(progress) {
+    save(STORAGE_KEYS.questProgress, {
+      completed: Array.isArray(progress.completed) ? progress.completed : []
+    });
+    updateStartProgress();
+  }
+
   function updateStartProgress() {
-    const checks = $$('[data-start-check]');
-    const values = checks.reduce((acc, input) => ({ ...acc, [input.dataset.startCheck]: input.checked }), {});
-    save(STORAGE_KEYS.checklist, values);
-    const gameProgress = getGameProgress();
-    const done = checks.filter((input) => input.checked).length + gameProgress.completed.length;
-    const total = checks.length + GAME_ROUNDS.length;
+    const progress = getQuestProgress();
+    const done = progress.completed.length;
+    const total = QUEST_STEPS.length;
     const pct = Math.round((done / total) * 100);
+    const complete = done >= total;
     $('#startProgress').style.width = `${pct}%`;
-    $('#progressText').textContent = `${pct}%`;
-    $('#enterWorkMode').disabled = pct < 100;
-    $('#enterWorkMode').textContent = pct < 100 ? `ЕЩЁ ${100 - pct}% ДО ЭФИРА` : 'ВЫЙТИ В ЭФИР';
+    $('#progressText').textContent = `${done}/${total}`;
+    $('#enterWorkMode').disabled = !complete;
+    $('#enterWorkMode').textContent = complete ? 'ОТКРЫТЬ ЭФИР' : `ЕЩЁ ${total - done} ШАГ${total - done === 1 ? '' : 'А'} ДО ЭФИРА`;
+    renderQuestStep();
     renderLaunchPlanPreview();
   }
 
@@ -171,9 +197,8 @@
     save(STORAGE_KEYS.gateComplete, false);
     save(STORAGE_KEYS.checklist, {});
     save(STORAGE_KEYS.gameProgress, { completed: [], choices: {} });
-    state.gameIndex = 0;
-    $$('[data-start-check]').forEach((input) => { input.checked = false; });
-    renderGameRound();
+    save(STORAGE_KEYS.questProgress, { completed: [] });
+    state.questStep = 0;
     updateStartProgress();
     renderLaunchPlanPreview();
     showScreen('start');
@@ -211,26 +236,18 @@
     };
   }
 
-  function setGameProgress(progress) {
-    save(STORAGE_KEYS.gameProgress, progress);
-    updateStartProgress();
-  }
-
   function getPrepRuns() { return load(STORAGE_KEYS.prepRuns, []); }
 
   function savePrepRun() {
-    const checks = $$('[data-start-check]');
-    const checklist = checks.reduce((acc, input) => ({ ...acc, [input.dataset.startCheck]: input.checked }), {});
-    const progress = getGameProgress();
+    const progress = getQuestProgress();
     const runs = getPrepRuns();
-    const completed = progress.completed.length + checks.filter((input) => input.checked).length;
     runs.unshift({
       id: uid(),
       date: new Date().toISOString(),
-      completed,
-      total: GAME_ROUNDS.length + checks.length,
-      checklist,
-      choices: progress.choices
+      completed: progress.completed.length,
+      total: QUEST_STEPS.length,
+      checklist: Object.fromEntries(progress.completed.map((id) => [id, true])),
+      choices: Object.fromEntries(progress.completed.map((id, index) => [String(index + 1).padStart(2, '0'), QUEST_STEPS.find((step) => step.id === id)?.title || id]))
     });
     save(STORAGE_KEYS.prepRuns, runs.slice(0, 60));
   }
@@ -238,52 +255,55 @@
   function renderLaunchPlanPreview() {
     const el = $('#launchPlanPreview');
     if (!el) return;
-    const choices = getGameProgress().choices;
-    const parts = [choices.ifthen, choices.tech, choices.first10, choices.launch].filter(Boolean);
-    el.innerHTML = parts.length
-      ? `<strong>План входа:</strong> ${parts.map(escapeHtml).join(' · ')}`
-      : 'После игры здесь появится план первых минут.';
+    const progress = getQuestProgress();
+    const done = progress.completed.length;
+    const next = QUEST_STEPS[done];
+    el.innerHTML = done >= QUEST_STEPS.length
+      ? '<strong>План входа:</strong> подготовка закрыта, первые 20 минут — мягкий тестовый эфир.'
+      : `<strong>Следующий якорь:</strong> ${escapeHtml(next?.title || 'выход в эфир')}. Не держи весь список в голове — делай только один шаг.`;
   }
 
-  function renderGameRound() {
-    const progress = getGameProgress();
-    const round = GAME_ROUNDS[state.gameIndex];
-    $('#gameTitle').textContent = round.title;
-    $('#gamePrompt').textContent = round.prompt;
-    $('#gameCounter').textContent = `${state.gameIndex + 1}/${GAME_ROUNDS.length}`;
-    $('#gameOptions').innerHTML = round.options.map((option) => `
-      <button class="game-option pressable ${progress.choices[round.id] === option ? 'active' : ''}" data-game-choice="${escapeHtml(option)}">${escapeHtml(option)}</button>
-    `).join('');
-    const completed = progress.completed.includes(round.id);
-    $('#completeGame').textContent = completed ? 'Шаг готов ✓' : 'Завершить шаг';
-    $('#completeGame').classList.toggle('complete', completed);
-    renderLaunchPlanPreview();
-    $('#prevGame').disabled = state.gameIndex === 0;
-    $('#nextGame').disabled = state.gameIndex === GAME_ROUNDS.length - 1;
+  function renderQuestStep() {
+    const progress = getQuestProgress();
+    const done = progress.completed.length;
+    const currentIndex = Math.min(done, QUEST_STEPS.length - 1);
+    const step = QUEST_STEPS[currentIndex];
+    const complete = done >= QUEST_STEPS.length;
+    state.questStep = currentIndex;
+    $('#questTitle').textContent = complete ? 'Квест подготовки завершён' : step.title;
+    $('#questCounter').textContent = complete ? `${QUEST_STEPS.length}/${QUEST_STEPS.length}` : `${currentIndex + 1}/${QUEST_STEPS.length}`;
+    $('#questIcon').textContent = complete ? '🏁' : step.icon;
+    $('#questPrompt').textContent = complete ? 'Все шаги закрыты. Теперь можно открывать эфир без ощущения, что что-то забыто.' : step.prompt;
+    $('#questMicrocopy').textContent = complete ? 'Финальная награда получена — переходи в рабочий режим.' : step.verify;
+    $('#questReward').textContent = complete ? '🏁 Полная подготовка сохранится в достижениях после входа в эфир.' : step.reward;
+    $('#completeQuestStep').disabled = complete;
+    $('#completeQuestStep').textContent = complete ? 'Все шаги выполнены' : 'Готово, я сделала';
+    $('#undoQuestStep').disabled = done === 0;
+    renderQuestBadges(done);
   }
 
-  function moveGame(delta) {
-    state.gameIndex = Math.min(GAME_ROUNDS.length - 1, Math.max(0, state.gameIndex + delta));
-    renderGameRound();
+  function renderQuestBadges(done) {
+    $('#badgeWater').classList.toggle('earned', done >= 1);
+    $('#badgeGlow').classList.toggle('earned', done >= 5);
+    $('#badgeStudio').classList.toggle('earned', done >= 8);
+    $('#badgeLaunch').classList.toggle('earned', done >= QUEST_STEPS.length);
   }
 
-  function chooseGameOption(choice) {
-    const progress = getGameProgress();
-    const round = GAME_ROUNDS[state.gameIndex];
-    progress.choices[round.id] = choice;
-    setGameProgress(progress);
-    renderGameRound();
+  function completeQuestStep() {
+    const progress = getQuestProgress();
+    if (progress.completed.length >= QUEST_STEPS.length) return;
+    const step = QUEST_STEPS[progress.completed.length];
+    progress.completed.push(step.id);
+    setQuestProgress(progress);
+    toast(step.reward);
   }
 
-  function completeGameRound() {
-    const progress = getGameProgress();
-    const round = GAME_ROUNDS[state.gameIndex];
-    if (!progress.choices[round.id]) return toast('Сначала выбери вариант');
-    if (!progress.completed.includes(round.id)) progress.completed.push(round.id);
-    setGameProgress(progress);
-    renderGameRound();
-    if (state.gameIndex < GAME_ROUNDS.length - 1) moveGame(1);
-    toast('Шаг сохранён');
+  function undoQuestStep() {
+    const progress = getQuestProgress();
+    if (!progress.completed.length) return;
+    progress.completed.pop();
+    setQuestProgress(progress);
+    toast('Вернулась на предыдущий шаг');
   }
 
   function renderCategories() {
@@ -691,7 +711,8 @@
   }
 
   function bindEvents() {
-    $$('[data-start-check]').forEach((input) => input.addEventListener('change', updateStartProgress));
+    $('#completeQuestStep').addEventListener('click', completeQuestStep);
+    $('#undoQuestStep').addEventListener('click', undoQuestStep);
     $('#enterWorkMode').addEventListener('click', enterApp);
     $('#resetStart').addEventListener('click', resetMorningProtocol);
     $('#sessionToggle').addEventListener('click', toggleSession);
@@ -702,24 +723,6 @@
     }));
     $('#enableNotifications').addEventListener('click', requestNotifications);
     $('#addPhrase').addEventListener('click', addPhrase);
-    $('#prevGame').addEventListener('click', () => moveGame(-1));
-    $('#nextGame').addEventListener('click', () => moveGame(1));
-    $('#completeGame').addEventListener('click', completeGameRound);
-    $('#gameOptions').addEventListener('click', (event) => {
-      const choice = event.target.closest('[data-game-choice]');
-      if (choice) chooseGameOption(choice.dataset.gameChoice);
-    });
-    $('#startGame').addEventListener('touchstart', (event) => {
-      const touch = event.changedTouches[0];
-      state.touchStartX = touch.clientX;
-      state.touchStartY = touch.clientY;
-    }, { passive: true });
-    $('#startGame').addEventListener('touchend', (event) => {
-      const touch = event.changedTouches[0];
-      const dx = touch.clientX - state.touchStartX;
-      const dy = touch.clientY - state.touchStartY;
-      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.25) moveGame(dx < 0 ? 1 : -1);
-    }, { passive: true });
     $('#translateButton').addEventListener('click', translate);
     $('#copyTranslation').addEventListener('click', () => copyText($('#translateOutput').textContent));
     $('#clearHistory').addEventListener('click', () => { save(STORAGE_KEYS.sessions, []); updateAllStats(); toast('История очищена'); });
@@ -744,14 +747,15 @@
     });
     $$('.tab').forEach((tab) => tab.addEventListener('click', () => showScreen(tab.dataset.target)));
     $$('.more-card').forEach((card) => card.addEventListener('click', () => showScreen(card.dataset.openScreen)));
+    $$('.back-button').forEach((button) => button.addEventListener('click', () => showScreen(button.dataset.backTo || 'more')));
     $('#app').addEventListener('touchstart', (event) => {
-      if (event.target.closest('textarea, input, select, button, #startGame')) return;
+      if (event.target.closest('textarea, input, select, button, #startQuest')) return;
       const touch = event.changedTouches[0];
       state.touchStartX = touch.clientX;
       state.touchStartY = touch.clientY;
     }, { passive: true });
     $('#app').addEventListener('touchend', (event) => {
-      if (event.target.closest('textarea, input, select, button, #startGame')) return;
+      if (event.target.closest('textarea, input, select, button, #startQuest')) return;
       const touch = event.changedTouches[0];
       const dx = touch.clientX - state.touchStartX;
       const dy = touch.clientY - state.touchStartY;
@@ -768,12 +772,10 @@
   }
 
   function boot() {
-    const checklist = load(STORAGE_KEYS.checklist, {});
-    $$('[data-start-check]').forEach((input) => { input.checked = Boolean(checklist[input.dataset.startCheck]); });
     bindEvents();
     updateStartProgress();
     renderPhrases();
-    renderGameRound();
+    renderQuestStep();
     renderLaunchPlanPreview();
     const goal = load(STORAGE_KEYS.sessionGoal, null);
     $$('.goal-chip').forEach((chip) => chip.classList.toggle('active', Number(chip.dataset.goal) === goal));
