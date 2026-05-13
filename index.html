@@ -18,13 +18,30 @@
   <main id="app" class="phone-shell" aria-live="polite">
     <section id="startScreen" class="screen start-screen active" data-screen="start" aria-labelledby="startTitle">
       <div class="hero-card glass-card">
-        <div class="status-pill"><span class="pulse-dot"></span> Morning protocol</div>
+        <div class="hero-orb" aria-hidden="true"></div>
+        <div class="status-pill"><span class="pulse-dot"></span> iPhone morning protocol</div>
         <h1 id="startTitle">SOC</h1>
         <p class="subtitle">Session Operator Console</p>
+        <p class="hero-note">Swipe the warm-up cards, complete quick mini-games, then enter work mode.</p>
         <div class="progress-wrap" aria-label="Preparation progress">
           <div class="progress-meta"><span>Work-mode charge</span><strong id="progressText">0%</strong></div>
           <div class="progress-track"><div id="startProgress" class="progress-fill"></div></div>
         </div>
+      </div>
+
+      <div class="game-card glass-card" id="startGame" aria-label="Warm-up mini-games">
+        <div class="result-head">
+          <div><p class="eyebrow">Warm-up game</p><h3 id="gameTitle">Loading game</h3></div>
+          <span id="gameCounter" class="mini-badge">1/4</span>
+        </div>
+        <p id="gamePrompt" class="game-prompt">Prepare your focus.</p>
+        <div id="gameOptions" class="game-options"></div>
+        <div class="game-actions">
+          <button id="prevGame" class="icon-button pressable" aria-label="Previous game">‹</button>
+          <button id="completeGame" class="secondary-button pressable">Complete round</button>
+          <button id="nextGame" class="icon-button pressable" aria-label="Next game">›</button>
+        </div>
+        <p class="swipe-hint">Swipe left/right to move between cards.</p>
       </div>
 
       <div class="checklist glass-card" id="startChecklist">
@@ -63,6 +80,11 @@
         <p class="eyebrow">Active session</p>
         <div id="timerDisplay" class="timer-display">00:00:00</div>
         <p id="sessionState" class="muted">Ready to begin a focused block.</p>
+        <div class="quick-start-grid" aria-label="Session quick goals">
+          <button class="goal-chip pressable" data-goal="60">60 min stream</button>
+          <button class="goal-chip pressable" data-goal="90">90 min stream</button>
+          <button class="goal-chip pressable" data-goal="120">2 hour push</button>
+        </div>
         <button id="sessionToggle" class="primary-button pressable">Start Session</button>
       </div>
 
@@ -75,6 +97,11 @@
         <h3>07:00 Reminder</h3>
         <p id="notificationStatus">Notification setup is checking availability.</p>
         <button id="enableNotifications" class="secondary-button pressable">Enable reminders</button>
+      </article>
+
+      <article class="glass-card insight-card save-card">
+        <div><span class="save-dot"></span><strong>Auto-save is on</strong></div>
+        <p id="saveStatus">Stats, active session, checklist, and custom phrases are saved on this iPhone.</p>
       </article>
     </section>
 
@@ -114,6 +141,10 @@
       <article class="glass-card chart-card">
         <h3>This week</h3>
         <div id="weekChart" class="week-chart"></div>
+      </article>
+      <article class="glass-card insight-card">
+        <h3>Saved locally</h3>
+        <p>Your statistics and new phrases persist in browser storage on the same installed app/browser. Use the same Safari/PWA icon tomorrow to see them again.</p>
       </article>
       <article class="glass-card history-card">
         <div class="result-head"><h3>Recent sessions</h3><button id="clearHistory" class="text-button danger pressable">Clear</button></div>

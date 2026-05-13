@@ -1,4 +1,4 @@
-const CACHE_NAME = 'soc-console-v1';
+const CACHE_NAME = 'soc-console-v2';
 const APP_SHELL = [
   './',
   './index.html',
