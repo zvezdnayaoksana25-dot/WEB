@@ -29,45 +29,29 @@
         </div>
       </div>
 
-      <div class="game-card glass-card" id="startGame" aria-label="Мини-игры для старта">
+      <div class="quest-card glass-card" id="startQuest" aria-label="Пошаговый старт эфира">
         <div class="result-head">
-          <div><p class="eyebrow">Игра на разгон</p><h3 id="gameTitle">Загружаю игру</h3></div>
-          <span id="gameCounter" class="mini-badge">1/4</span>
+          <div><p class="eyebrow">Квест подготовки</p><h3 id="questTitle">Загружаю первый шаг</h3></div>
+          <span id="questCounter" class="mini-badge">1/14</span>
         </div>
-        <p id="gamePrompt" class="game-prompt">Собери внимание.</p>
-        <div id="gameOptions" class="game-options"></div>
-        <div class="game-actions">
-          <button id="prevGame" class="icon-button pressable" aria-label="Предыдущая игра">‹</button>
-          <button id="completeGame" class="secondary-button pressable">Завершить шаг</button>
-          <button id="nextGame" class="icon-button pressable" aria-label="Следующая игра">›</button>
+        <div class="quest-stage" aria-live="polite">
+          <div id="questIcon" class="quest-icon" aria-hidden="true">💧</div>
+          <p id="questPrompt" class="quest-prompt">Сделай только текущий шаг. Следующий откроется после подтверждения.</p>
+          <p id="questMicrocopy" class="quest-microcopy">Мини-проверка помогает не просто натыкать, а реально выполнить действие.</p>
         </div>
-        <p class="swipe-hint">Листай влево/вправо, чтобы переключать карточки.</p>
+        <div id="questReward" class="quest-reward" aria-live="polite">Награда откроется после шага.</div>
+        <button id="completeQuestStep" class="primary-button pressable">Готово, я сделала</button>
+        <button id="undoQuestStep" class="text-button quest-back pressable" disabled>Вернуться на шаг назад</button>
       </div>
 
-      <div class="checklist glass-card" id="startChecklist">
-        <label class="check-row pressable">
-          <input type="checkbox" data-start-check="wake">
-          <span class="checkmark"></span>
-          <span><strong>Проснуться без спора</strong><small>Вода, дыхание, телефон в сторону.</small></span>
-        </label>
-        <label class="check-row pressable">
-          <input type="checkbox" data-start-check="prep">
-          <span class="checkmark"></span>
-          <span><strong>Уход и образ</strong><small>Умыться, привести себя в порядок, одеться красиво.</small></span>
-        </label>
-        <label class="check-row pressable">
-          <input type="checkbox" data-start-check="workspace">
-          <span class="checkmark"></span>
-          <span><strong>Рабочее место</strong><small>Ноутбук, интернет, вкладки, напиток рядом.</small></span>
-        </label>
-        <label class="check-row pressable">
-          <input type="checkbox" data-start-check="camera">
-          <span class="checkmark"></span>
-          <span><strong>Камера и свет</strong><small>Кадр, свет, звук, фон и быстрый тест.</small></span>
-        </label>
+      <div class="achievement-strip glass-card" aria-label="Достижения подготовки">
+        <div class="achievement"><span id="badgeWater">💧</span><small>Старт</small></div>
+        <div class="achievement"><span id="badgeGlow">✨</span><small>Уход</small></div>
+        <div class="achievement"><span id="badgeStudio">🎥</span><small>Сцена</small></div>
+        <div class="achievement"><span id="badgeLaunch">🚀</span><small>Эфир</small></div>
       </div>
 
-      <button id="enterWorkMode" class="primary-button pressable" disabled>ВЫЙТИ В ЭФИР</button>
+      <button id="enterWorkMode" class="primary-button pressable" disabled>ОТКРЫТЬ ЭФИР</button>
     </section>
 
     <section id="homeScreen" class="screen" data-screen="home" aria-labelledby="homeTitle">
@@ -116,7 +100,7 @@
     </section>
 
     <section id="addPhraseScreen" class="screen" data-screen="addPhrase" aria-labelledby="addPhraseTitle">
-      <header class="topbar"><div><p class="eyebrow">Редко, но полезно</p><h2 id="addPhraseTitle">Добавить фразу</h2></div></header>
+      <header class="topbar"><button class="back-button pressable" data-back-to="more">‹ Назад</button><div><p class="eyebrow">Редко, но полезно</p><h2 id="addPhraseTitle">Добавить фразу</h2></div></header>
       <div class="add-card glass-card">
         <p class="muted">Сохрани личную фразу. Английские фразы автоматически получат русский перевод, если сервис доступен.</p>
         <select id="phraseCategory" aria-label="Категория"></select>
@@ -142,7 +126,7 @@
     </section>
 
     <section id="statsScreen" class="screen" data-screen="stats" aria-labelledby="statsTitle">
-      <header class="topbar"><div><p class="eyebrow">Результаты</p><h2 id="statsTitle">Статистика</h2></div></header>
+      <header class="topbar"><button class="back-button pressable" data-back-to="more">‹ Назад</button><div><p class="eyebrow">Результаты</p><h2 id="statsTitle">Статистика</h2></div></header>
       <div class="grid-two">
         <article class="metric-card glass-card"><span id="totalSessions">0</span><small>Всего эфиров</small></article>
         <article class="metric-card glass-card"><span id="totalHours">0.0 ч</span><small>Всего часов</small></article>
@@ -171,7 +155,7 @@
     </section>
 
     <section id="earningsScreen" class="screen" data-screen="earnings" aria-labelledby="earningsTitle">
-      <header class="topbar"><div><p class="eyebrow">Деньги и цели</p><h2 id="earningsTitle">Заработок</h2></div></header>
+      <header class="topbar"><button class="back-button pressable" data-back-to="more">‹ Назад</button><div><p class="eyebrow">Деньги и цели</p><h2 id="earningsTitle">Заработок</h2></div></header>
       <div class="grid-two">
         <article class="metric-card glass-card"><span id="todayEarnings">$0</span><small>Сегодня</small></article>
         <article class="metric-card glass-card"><span id="weekEarnings">$0</span><small>За неделю</small></article>
@@ -216,7 +200,7 @@
   <nav id="tabBar" class="tab-bar glass-card hidden" aria-label="Основная навигация">
     <button class="tab active pressable" data-target="home">⌁<span>Эфир</span></button>
     <button class="tab pressable" data-target="phrases">✦<span>Фразы</span></button>
-    <button class="tab pressable" data-target="translate">⇄<span>Перевести</span></button>
+    <button class="tab pressable" data-target="translate">⇄<span>Перевод</span></button>
     <button class="tab pressable" data-target="stats">◷<span>Итоги</span></button>
     <button class="tab pressable" data-target="more">⋯<span>Ещё</span></button>
   </nav>
